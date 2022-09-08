@@ -32,6 +32,7 @@ router.put('/:id', (req, res) => {
   })
 })
 
+// delete user
 router.delete('/:id', (req, res) => {
   User.updateOne({ _id: req.body.id }, req.body.new, function (err, res) {
     if (err) return console.log(err)
@@ -39,13 +40,28 @@ router.delete('/:id', (req, res) => {
   })
 })
 
+// add friend
 router.post('/:userId/friends/:friendId', (req, res) => {
-  User.findById(req.params.userId).friends.push(req.params.friendId)
-  res.json({ success: true })
+  User.findById(req.params.userId, function (err, small) {
+    if (err) return console.log(err)
+    small.friends.push(req.params.friendId)
+    small.save(function (err) {
+      if (err) return console.log(err)
+      res.json(small)
+    })
+  })
 })
+
+// delete friend
 router.delete('/:userId/friends/:friendId', (req, res) => {
-  User.findById(req.params.userId).friends.id(req.params.friendId).remove()
-  res.json({ success: true })
+  User.findById(req.params.userId, function (err, small) {
+    if (err) return console.log(err)
+    small.friends = small.friends.filter(sub => req.params.friendId !== sub.id)
+    small.save(function (err) {
+      if (err) return console.log(err)
+      res.json(small)
+    })
+  })
 })
 
 module.exports = router
