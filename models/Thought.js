@@ -25,6 +25,11 @@ const thoughtSchema = new mongoose.Schema({
       get () {
         return this.reactions.length
       }
+    },
+    timestamp: {
+      get () {
+        return this.reactions.length
+      }
     }
   }
 })

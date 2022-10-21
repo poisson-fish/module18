@@ -1,5 +1,5 @@
 const router = require('express').Router()
-const { Thought } = require('../../models')
+const { Thought, User } = require('../../models')
 
 // The `/api/thoughts` endpoint
 
@@ -17,10 +17,18 @@ router.get('/:id', async (req, res) => {
 })
 
 // create new thought
-router.post('/', (req, res) => {
-  Thought.create(req.body, function (err, small) {
-    if (err) return console.log(err)
-    res.json(small)
+router.post('/:id', (req, res) => {
+  User.findOne({ _id: req.params.id }, function (findErr, findRes) {
+    if (findErr) return console.log(findErr)
+    // create a thought and add it to the user
+    Thought.create(req.body, function (err, small) {
+      if (err) return console.log(err)
+      findRes.thoughts.push(small.id)
+      findRes.save(function (err, saveRes) {
+        if (err) return console.log(err)
+        res.json(saveRes)
+      })
+    })
   })
 })
 
